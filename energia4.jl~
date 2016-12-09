@@ -1,3 +1,4 @@
+##minor change
 using Convex, Mosek, PyPlot
 
 eh=readdlm("../e_high.csv")
@@ -39,8 +40,8 @@ p=minimize(sum(u) + sum(abs(u[2:end]-u[1:end-1])));
 p.constraints += x>=0;						#bateria positiva
 p.constraints += x<=B_max;					#capacidad del banco
 p.constraints += y>=0;						#generacion solar positiva
-#p.constraints += u>=0;
-#p.constraints += u<=1;						#generacion diesel On-OFF
+p.constraints += u>=0;
+p.constraints += u<=1;						#generacion diesel On-OFF
 p.constraints += x[2:end]-x[1:end-1] == y+p_dmax*u-d;		#carga de bateria
 p.constraints += x[end] == x[1];		                #bateria final igual a inicial
 p.constraints += y<=e;						#y=uso de la energia solar posible
