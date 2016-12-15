@@ -13,12 +13,10 @@ longitude = -56.813
 altitude = 160
 timezone = 'Etc/GMT+3'
 
-sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+sandia_modules = pvlib.pvsystem.retrieve_sam('cecmod')
 sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
-module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
-inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208_208V__CEC_2014_']
-
-print(sandia_modules)
+module = sandia_modules['Suntech_Power_STP290_24_Vd']
+inverter = sapm_inverters['SMA_America__STP20000TL_US_10__480V__480V__CEC_2013_'] #es el mas parecido que encontre
 
 localized_system = LocalizedPVSystem(module_parameters=module,
 				     inverter_parameters=inverter,
@@ -30,7 +28,7 @@ localized_system = LocalizedPVSystem(module_parameters=module,
                                      altitude=altitude,
                                      tz=timezone)
 
-naive_times = pd.DatetimeIndex(start='20161212', end='20161213', freq='1h')
+naive_times = pd.DatetimeIndex(start='20161213', end='20161214', freq='1h')
 times = naive_times.tz_localize(timezone)
 clearsky = localized_system.get_clearsky(times)
 
@@ -73,8 +71,10 @@ print("Air masses:")
 print(airmass)
 print("-----------------------------------")
 
-effective_irradiance = localized_system.sapm_effective_irradiance(total_irrad['poa_direct'], 
-	total_irrad['poa_diffuse'],airmass['airmass_absolute'], aoi)
+#effective_irradiance = localized_system.sapm_effective_irradiance(total_irrad['poa_direct'], 
+#	total_irrad['poa_diffuse'],airmass['airmass_absolute'], aoi)
+
+effective_irradiance = localized_system.calcparams_desoto(total_irrad['poa_global'],temps['temp_cell'],localized_system.module_parameters.alpha_sc)
 
 print("Eff. irradiance:")
 print(effective_irradiance)
